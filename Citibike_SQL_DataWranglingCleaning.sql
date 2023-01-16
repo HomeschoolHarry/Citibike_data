@@ -201,7 +201,7 @@ FROM public.citibike_master_load cm
 -- 		ACOS( SIN(LAT1) * SIN(LAT2) + COS(LAT1)*COS(LAT2) * COS(LONG2 - LONG1)) * Radius
 -- 		|x1-x2| + |y1-y2| = 
 -- 		ALL results in KM: 1KM = .68 miles
-
+DROP TABLE citibike_final_geo
 CREATE TABLE citibike_final_geo as
 SELECT
 start_station_id,
@@ -216,9 +216,12 @@ end_long,
 stop_time,
 membership,
 ride_time,
-SQRT( POWER(start_long - end_long, 2) + POWER(start_lat - end_lat, 2)) * 100 as euc_dist,
-ROUND((ABS(start_long- end_long) + ABS(start_lat-end_lat)*1000)* 0.06214,4) as man_dist
+((ABS(start_long- end_long) + ABS(start_lat-end_lat))*100) / 1.60 as man_dist
 FROM public.geo_table
+
+
+--for Euclidean Distance
+--SQRT( POWER(start_long - end_long, 2) + POWER(start_lat - end_lat, 2))as euc_dist,
 
 --count of starts (trips)
 SELECT start_station_id, start_station_name, COUNT(*)
